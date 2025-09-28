@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "api/webhook.js": {
+      "maxDuration": 10
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/webhook",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "POST" },
+        { "key": "Access-Control-Allow-Headers", "value": "content-type" }
+      ]
+    }
+  ]
+}
