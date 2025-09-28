@@ -1,7 +1,7 @@
 // api/webhook.js
 // Node 18+ : fetch & crypto sudah native
 
-const TARGET = 'http://128.199.212.210:3000/webhook';   // ganti dengan IP:port VPS-mu
+const TARGET = 'http://128.199.212.210:4000/webhook';   // ganti dengan IP:port VPS-mu
 const SECRET = process.env.FORWARD_SECRET || '';     // taruh di Vercel → Settings → Env Variables
 
 export default async function handler(req, res) {
