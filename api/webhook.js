@@ -5,6 +5,7 @@ const TARGET = 'http://128.199.212.210:3000/webhook';   // ganti dengan IP:port 
 const SECRET = process.env.FORWARD_SECRET || '';     // taruh di Vercel → Settings → Env Variables
 
 export default async function handler(req, res) {
+  if (req.method === 'GET') return res.send('GarudWSA webhook online');
   // 1. Cuma terima POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
