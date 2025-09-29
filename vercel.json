@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/webhook.js": {
+    "api/tripay-webhook.js": {
       "maxDuration": 10
     }
   },
