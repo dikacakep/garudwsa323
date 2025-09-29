@@ -1,35 +1,35 @@
 // api/webhook.js
-const https = require('https');
+// Node 18+ : fetch & crypto sudah native
 
-const TARGET = 'https://128.199.212.210:443/webhook';
-const SECRET = process.env.FORWARD_SECRET || '';
+const TARGET = 'http://128.199.212.210:4000/webhook';   // IP VPS + port HTTP
+const SECRET = process.env.FORWARD_SECRET || 'whateversecret';
 
 export default async function handler(req, res) {
-  if (req.method === 'GET' && req.url === '/') {
-    return res.status(200).json({ message: 'Webhook Forwarder is running' });
-  }
+  // 1. Cuma terima POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // 2. Salin header penting (biar VPS tetap bisa validasi)
   const headers = {
     'content-type': 'application/json',
     'user-agent': req.headers['user-agent'] || 'vercel-forward/1.0',
   };
   if (SECRET) headers['x-forward-secret'] = SECRET;
 
+  // 3. Parse body (Vercel otomatis json bila content-type json)
   const body = req.body;
-  console.log('Received body:', JSON.stringify(body, null, 2));
 
   try {
+    // 4. Teruskan ke VPS
     const resp = await fetch(TARGET, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
-      agent: new https.Agent({ rejectUnauthorized: false }), // Abaikan verifikasi SSL
     });
+
+    // 5. Balikkan status & body dari VPS ke Resend
     const text = await resp.text();
-    console.log(`VPS response: [${resp.status}] ${text}`);
     return res.status(resp.status).send(text);
   } catch (err) {
     console.error('Forward error:', err);
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
   }
 }
 
+// Agar Vercel parse body otomatis
 export const config = {
   api: {
     bodyParser: true,
