@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   console.log('Body:', JSON.stringify(req.body, null, 2));
 
   // Configuration
-  const TARGET = process.env.VPS_URL || 'https://192.168.1.110:443/tripay-webhook';
+  const TARGET = process.env.VPS_URL || 'https://128.199.212.210:443/tripay-webhook';
   const SECRET = process.env.FORWARD_SECRET;
   const TIMEOUT = 25000; // 25 seconds (Vercel has 30s limit)
 
