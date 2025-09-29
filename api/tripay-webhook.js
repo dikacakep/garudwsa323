@@ -1,43 +1,43 @@
-// api/webhook.js
-// Node 18+ : fetch & crypto sudah native
-
-const TARGET = 'http://128.199.212.210:4000/webhook';   // IP VPS + port HTTP
+// api/tripay-webhook.js
+const TARGET = 'https://180.243.8.120:443/tripay-webhook';  // Path sama dengan nama file
 const SECRET = process.env.FORWARD_SECRET || 'whateversecret';
 
 export default async function handler(req, res) {
-  // 1. Cuma terima POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // 2. Salin header penting (biar VPS tetap bisa validasi)
+  console.log('Received webhook from Tripay:', JSON.stringify(req.body, null, 2));
+
   const headers = {
     'content-type': 'application/json',
     'user-agent': req.headers['user-agent'] || 'vercel-forward/1.0',
+    'x-forwarded-for': req.headers['x-forwarded-for'] || req.ip,
   };
+
   if (SECRET) headers['x-forward-secret'] = SECRET;
 
-  // 3. Parse body (Vercel otomatis json bila content-type json)
-  const body = req.body;
-
   try {
-    // 4. Teruskan ke VPS
     const resp = await fetch(TARGET, {
       method: 'POST',
       headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify(req.body),
     });
 
-    // 5. Balikkan status & body dari VPS ke Resend
     const text = await resp.text();
+    console.log(`VPS Response: ${resp.status} - ${text}`);
+    
     return res.status(resp.status).send(text);
+    
   } catch (err) {
     console.error('Forward error:', err);
-    return res.status(502).json({ error: 'Bad gateway' });
+    return res.status(502).json({ 
+      error: 'Bad gateway',
+      details: err.message 
+    });
   }
 }
 
-// Agar Vercel parse body otomatis
 export const config = {
   api: {
     bodyParser: true,
