@@ -1,6 +1,6 @@
 // api/vps-test.js
 export default async function handler(req, res) {
-  const VPS_URL = process.env.VPS_URL || 'https://192.168.1.110:443';
+  const VPS_URL = process.env.VPS_URL || 'https://128.199.212.210:443';
   const targets = [
     `${VPS_URL}/tripay-webhook`,
     `${VPS_URL}/health`,
